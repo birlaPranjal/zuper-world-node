@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
@@ -48,9 +48,9 @@ app.use('/api', eventRoutes);
 app.use('/api/guru', guruRoutes);
 
 // Add a direct login route for backward compatibility
-app.post('/api/login', (req, res) => {
+app.post('/api/login', (req: Request, res: Response) => {
   // Forward the request to the auth login route
-  authController.login(req, res);
+  authController.login(req as any, res);
 });
 
 // Make sure event participant routes are registered correctly
@@ -61,17 +61,17 @@ app.use(eventParticipantRoutes);
 app.use('/api', eventParticipantRoutes);
 
 // Debug route to check if the server is receiving requests
-app.get('/api/debug', (req, res) => {
+app.get('/api/debug', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Debug endpoint reached' });
 });
 
 // Health check route
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
 });
 
 // 404 handler
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
   console.log(`404 Not Found: ${req.method} ${req.url}`);
   res.status(404).json({ error: 'Not Found' });
 });

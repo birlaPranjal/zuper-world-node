@@ -1,12 +1,30 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { uploadToCloudinary } from '../utils/cloudinary';
 import { sendEmail } from '../utils/emailService';
+
+// Extend the Express Request type to include our custom properties
+interface Request extends ExpressRequest {
+  body: any;
+  headers: {
+    'user-id'?: string;
+    'x-user-role'?: string;
+    [key: string]: string | string[] | undefined;
+  };
+  params: {
+    [key: string]: string;
+  };
+  query: {
+    [key: string]: string | string[] | undefined;
+  };
+  files?: any;
+}
 
 // Extend PrismaClient to include our models
 interface ExtendedPrismaClient extends PrismaClient {
   guruApplication: any;
   successStory: any;
+  user: any;
 }
 
 const prisma = new PrismaClient() as ExtendedPrismaClient;

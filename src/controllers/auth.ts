@@ -1,7 +1,28 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { prisma } from '../index';
 import { Role } from '@prisma/client';
 import { randomUUID } from 'crypto';
+
+// Extend the Express Request type to include our custom properties
+interface Request extends ExpressRequest {
+  body: {
+    userId?: string;
+    userEmail?: string;
+    userRole?: Role;
+    [key: string]: any;
+  };
+  headers: {
+    'user-id'?: string;
+    'x-user-role'?: string;
+    [key: string]: string | string[] | undefined;
+  };
+  params: {
+    [key: string]: string;
+  };
+  query: {
+    [key: string]: string | string[] | undefined;
+  };
+}
 
 // Types
 type UserCreateData = {

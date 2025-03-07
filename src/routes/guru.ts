@@ -1,8 +1,9 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as guruController from '../controllers/guruController';
 import { authenticateToken, isAdmin, isAdminOrGuru } from '../middleware/auth';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as authController from '../controllers/auth';
 
 const router = express.Router();
@@ -11,7 +11,7 @@ router.post('/update-profile', authController.updateProfile);
 router.get('/users/:id', authController.getUserById);
 
 // Add a route to check authentication status
-router.get('/check-auth', (req, res) => {
+router.get('/check-auth', (req: Request, res: Response) => {
   // If the request reaches here, it means authentication was successful
   res.status(200).json({ authenticated: true });
 });

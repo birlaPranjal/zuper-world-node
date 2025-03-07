@@ -1,5 +1,23 @@
-import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { Request as ExpressRequest, Response, NextFunction } from 'express';
+import { PrismaClient, Role } from '@prisma/client';
+
+// Extend the Express Request type to include our custom properties
+interface Request extends ExpressRequest {
+  body: {
+    userId?: string;
+    userEmail?: string;
+    userRole?: Role;
+    [key: string]: any;
+  };
+  headers: {
+    'user-id'?: string;
+    'x-user-role'?: string;
+    [key: string]: string | string[] | undefined;
+  };
+  params: {
+    [key: string]: string;
+  };
+}
 
 const prisma = new PrismaClient();
 
