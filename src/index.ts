@@ -13,17 +13,6 @@ import path from 'path';
 // Load environment variables from .env file
 dotenv.config();
 
-// Log environment variables for debugging (without exposing secrets)
-console.log('Environment Variables Loaded:', {
-  NODE_ENV: process.env.NODE_ENV,
-  PORT: process.env.PORT,
-  DATABASE_URL: process.env.DATABASE_URL ? '******' : undefined,
-  CLOUDINARY_CONFIG: {
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY ? '******' : undefined,
-    api_secret: process.env.CLOUDINARY_API_SECRET ? '******' : undefined
-  }
-});
 
 // Create Express app
 const app = express();
@@ -68,6 +57,10 @@ app.get('/api/debug', (req: Request, res: Response) => {
 // Health check route
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
+});
+
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ message: 'Zuper Node API is running' });
 });
 
 // 404 handler
