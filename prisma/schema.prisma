@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               String             @id @default(uuid())
+  name             String
+  email            String             @unique
+  password         String
+  role             Role
+  qualification    String
+  description      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  phone            String
+  Event            Event[]
+  EventParticipant EventParticipant[]
+  Payment          Payment[]
+  GuruApplication  GuruApplication?
+  SuccessStory     SuccessStory[]
+}
+
+model Event {
+  id               String             @id
+  name             String
+  description      String
+  startDate        DateTime
+  endDate          DateTime
+  location         String
+  imageUrl         String?
+  ticketPrice      Float              @default(0)
+  capacity         Int
+  requireApproval  Boolean            @default(false)
+  isPublished      Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  creatorId        String
+  User             User               @relation(fields: [creatorId], references: [id])
+  EventParticipant EventParticipant[]
+  Payment          Payment[]
+}
+
+model EventParticipant {
+  id        String            @id
+  status    ParticipantStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime
+  userId    String
+  eventId   String
+  notes     String?
+  paymentId String?           @unique
+  Event     Event             @relation(fields: [eventId], references: [id])
+  Payment   Payment?          @relation(fields: [paymentId], references: [id])
+  User      User              @relation(fields: [userId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Payment {
+  id               String            @id
+  amount           Float
+  currency         String
+  status           PaymentStatus
+  orderId          String?           @unique
+  paymentId        String?           @unique
+  signature        String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime
+  userId           String
+  eventId          String
+  EventParticipant EventParticipant?
+  Event            Event             @relation(fields: [eventId], references: [id])
+  User             User              @relation(fields: [userId], references: [id])
+}
+
+model GuruApplication {
+  id            String                @id @default(uuid())
+  fullName      String
+  email         String
+  phone         String
+  expertise     String[]
+  experience    String
+  linkedin      String
+  website       String?
+  bio           String
+  motivation    String
+  resumeUrl     String
+  profileImageUrl String
+  status        ApplicationStatus     @default(PENDING)
+  notes         String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  userId        String                @unique
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  User          User                  @relation(fields: [userId], references: [id])
+}
+
+model SuccessStory {
+  id               String            @id @default(uuid())
+  founderName      String
+  companyName      String
+  industry         String
+  imageUrl         String
+  shortDescription String
+  fullStory        String            @db.Text
+  achievements     String[]
+  testimonial      String
+  isPublished      Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  userId           String
+  User             User              @relation(fields: [userId], references: [id])
+}
+
+enum ParticipantStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum Role {
+  ADMIN
+  GURU
+  ARMY_MEMBER
+  ARMY_LEADER
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  INTERVIEW_SCHEDULED
+}
