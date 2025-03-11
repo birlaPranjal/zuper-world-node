@@ -64,14 +64,6 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
     const bodyUserRole = req.body.userRole;
     const userRole = req.body.userRole || bodyUserRole || headerUserRole;
     
-    console.log('Checking admin role:', { 
-      userRole,
-      bodyUserRole,
-      headerUserRole,
-      userId: req.body.userId,
-      headers: req.headers['user-id']
-    });
-    
     if (userRole !== 'ADMIN') {
       return res.status(403).json({ error: 'Access denied. Admin role required.' });
     }
